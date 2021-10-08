@@ -4,11 +4,112 @@
     <meta charset="UTF-8">
     <title>Horizontal Stacked Bar Chart</title>
     <script src="../libs/d3/d3.min.js"></script>
+    <style>
+        svg{
+            width:100%;
+            height : 100%;
+        }
+        #container {
+            width: 80%;
+            margin: auto;
+            padding-top: 3% ;
+        }
+    </style>
 
 </head>
 <body>
-<div style="width: 80%"></div>
-<script>
+<div id = "container">
+    <svg viewBox = "0 0 1000 600"></svg>
+</div>
+<script language = "javascript">
+    var width = 300;
+    var height = 300;
+    let svg = d3.select("#container")
+        .append('svg')
+        .attr("width" ,width)
+        .attr("height", height) ;       
+
+    const loadData = d3.csv("data_sample.csv",
+        function(d) {
+        return {
+        date: d3.timeParse("%Y-%m")(d.date),
+        EstimatedCost: Number(d.EstimatedCost),
+        RawMaterial: Number(d.RawMaterial),
+        Workmanship: Number(d.Workmanship),
+        YearlyStorage: Number(d.YearlyStorage)
+            };
+    }).then(data => {
+        console.log(loadData)
+        let x = d3.scaleTime()
+            .domain(d3.extent(data, function(d) { return d.date; }))
+            .range([0,1000]);
+        let y = d3.scaleLinear()
+            .domain(d3.extent(data, function(d) { return d.EstimatedCost; }))
+            .range([1000,0]);
+
+
+            let line=d3.line()
+            .x(function(d, i) {
+                return x(data[i].date);
+         })
+            .y(function(d) {
+               return y(d.EstimatedCost);
+          });
+
+          let line2=d3.line()
+            .x(function(d, i) {
+                return x(data[i].date);
+         })
+            .y(function(d) {
+               return y(d.RawMaterial);
+          });
+
+          let line3=d3.line()
+            .x(function(d, i) {
+                return x(data[i].date);
+         })
+            .y(function(d) {
+               return y(d.Workmanship);
+          });
+
+          let line4=d3.line()
+            .x(function(d, i) {
+                return x(data[i].date);
+         })
+            .y(function(d) {
+               return y(d.YearlyStorage);
+          });
+          
+            svg.append("path")
+                .data([data])
+                .attr("class", "line")
+                .attr("d", line)
+                .attr("fill",'none')
+                .style("stroke","red");
+
+            svg.append("path")
+                .data([data])
+                .attr("class","line")
+                .attr("d", line2)
+                .attr("fill",'none')
+                .style("stroke", "blue");
+
+            svg.append("path")
+                .data([data])
+                .attr("class","line")
+                .attr("d", line3)
+                .attr("fill",'none')
+                .style("stroke", "yellow");
+            
+            svg.append("path")
+                .data([data])
+                .attr("class","line")
+                .attr("d", line4)
+                .attr("fill",'none')
+                .style("stroke", "purple");
+
+
+        })
 
 </script>
 </body>
